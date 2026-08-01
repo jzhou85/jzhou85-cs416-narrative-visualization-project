@@ -214,3 +214,132 @@ function drawScatter() {
     .duration(500)
     .style("opacity", 1);
 }
+
+function drawBars() {
+  d3.select("#scene-title").text("Scene 2 — Age Drives Mortality: Average Death Rate by Median Age Group");
+  d3.select("#scene-subtitle").text("Averaging every country-year from 2020–2023, the death rate climbs steadily with median age. Countries with median age 45+ averaged roughly 12 times the death rate of countries with median age under 25.");
+
+  const svg = d3.select("#viz");
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
+  const margin = { top: 30, right: 175, bottom: 55, left: 70 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  const ageGroups = ["Under 25", "25-34", "35-44", "45+"];
+  const color = d3.scaleOrdinal()
+    .domain(ageGroups)
+    .range(["#fee08b", "#fdae61", "#f46d43", "#9e0142"]);
+
+  // Average death rate per age group, pooling every country and every year
+  const meansByGroup = d3.rollup(
+    data,
+    rows => d3.mean(rows, d => d["Deaths per 100k"]),
+    d => d["Age Group"]
+  );
+
+  const barData = ageGroups.map(function(group) {
+    return { group: group, mean: meansByGroup.get(group) };
+  });
+
+  const x = d3.scaleBand()
+    .domain(ageGroups)
+    .range([0, innerWidth])
+    .padding(0.35);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(barData, d => d.mean)])
+    .range([innerHeight, 0])
+    .nice();
+
+  // Axes
+  g.append("g")
+    .attr("transform", "translate(0," + innerHeight + ")")
+    .call(d3.axisBottom(x));
+
+  g.append("g")
+    .call(d3.axisLeft(y));
+
+  g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 45)
+    .attr("text-anchor", "middle")
+    .text("Country median age group");
+
+  g.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -innerHeight / 2)
+    .attr("y", -50)
+    .attr("text-anchor", "middle")
+    .text("Avg deaths per 100,000 (2020–2023)");
+
+  // Bars — grow from the x-axis upward, one at a time, youngest to oldest
+  const groupDelayStep = 1000;
+  const groupGrowDuration = 800;
+
+  g.selectAll("rect.bar")
+    .data(barData)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", d => x(d.group))
+    .attr("width", x.bandwidth())
+    .attr("fill", d => color(d.group))
+    .attr("stroke", "white")
+    .attr("y", y(0))
+    .attr("height", 0)
+    .transition()
+    .delay((_, i) => i * groupDelayStep)
+    .duration(groupGrowDuration)
+    .attr("y", d => y(d.mean))
+    .attr("height", d => innerHeight - y(d.mean));
+
+  // Value labels — fade in after each bar finishes growing
+  g.selectAll("text.bar-label")
+    .data(barData)
+    .enter()
+    .append("text")
+    .attr("class", "bar-label")
+    .attr("x", d => x(d.group) + x.bandwidth() / 2)
+    .attr("y", d => y(d.mean) - 10)
+    .attr("text-anchor", "middle")
+    .style("opacity", 0)
+    .text(d => d.mean.toFixed(1))
+    .transition()
+    .delay((_, i) => i * groupDelayStep + groupGrowDuration)
+    .duration(300)
+    .style("opacity", 1);
+
+  // Annotation — fades in after every bar has finished growing
+  const oldestBar = barData[barData.length - 1];
+
+  const annotations = [{
+    note: {
+      title: "45+ group: 73 deaths per 100k",
+      label: "Roughly 12× the average death rate of countries with median age under 25 (6.1 per 100k).",
+      wrap: 220
+    },
+    x: x(oldestBar.group) + x.bandwidth() / 2,
+    y: y(oldestBar.mean),
+    dx: -100,
+    dy: 0
+  }];
+
+  const makeAnnotations = d3.annotation()
+    .type(d3.annotationCalloutElbow)
+    .annotations(annotations);
+
+  const barsFinishTime = (ageGroups.length - 1) * groupDelayStep + groupGrowDuration;
+
+  g.append("g")
+    .attr("class", "annotation-group")
+    .style("opacity", 0)
+    .call(makeAnnotations)
+    .transition()
+    .delay(barsFinishTime)
+    .duration(500)
+    .style("opacity", 1);
+}
