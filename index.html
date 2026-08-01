@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Older Populations, Higher COVID Death Rates</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="header">
+    <h1 id="scene-title"></h1>
+    <p id="scene-subtitle"></p>
+  </div>
+  <div id="controls">
+    <button id="prevBtn">◀ Back</button>
+    <span id="scene-indicator"></span>
+    <button id="nextBtn">Next ▶</button>
+    <span id="year-control" style="display:none">
+      Year: <input type="range" id="yearSlider" min="2020" max="2023" step="1" value="2021">
+      <span id="yearLabel">2021</span>
+    </span>
+  </div>
+  <svg id="viz" width="960" height="560"></svg>
+  <div id="tooltip" class="hidden"></div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-svg-annotation@2/d3-annotation.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
