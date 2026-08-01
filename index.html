@@ -8,15 +8,18 @@
 <body>
   <div id="header">
     <h1 id="scene-title"></h1>
-    <p id="scene-subtitle"></p>
   </div>
-  <svg id="viz" width="960" height="560"></svg>
-  <div id="controls">
-    <button id="prevBtn">◀ Back</button>
-    <span id="scene-indicator"></span>
-    <button id="nextBtn">Next ▶</button>
+  <div id="content">
+    <svg id="viz" width="960" height="560"></svg>
+    <div id="side">
+      <p id="scene-subtitle"></p>
+      <div id="controls">
+        <button id="prevBtn">◀ Back</button>
+        <span id="scene-indicator"></span>
+        <button id="nextBtn">Next ▶</button>
+      </div>
+    </div>
   </div>
-  <svg id="viz" width="960" height="560"></svg>
   <div id="tooltip" class="hidden"></div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>

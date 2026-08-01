@@ -29,19 +29,6 @@ function render() {
   if (state.scene === 2) drawBars();
   if (state.scene === 3) drawMap();
   updateControls();
-
-  // Wrap the subtitle to the same width as the title text.
-  const titleNode = document.getElementById("scene-title");
-  const titleStyle = getComputedStyle(titleNode);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  ctx.font = titleStyle.fontWeight + " " + titleStyle.fontSize + " " + titleStyle.fontFamily;
-  const titleTextWidth = ctx.measureText(titleNode.textContent).width;
-
-  // Don't let the subtitle stretch past the header's own available width
-  const containerWidth = document.getElementById("header").clientWidth;
-  const wrapWidth = Math.min(titleTextWidth, containerWidth);
-  d3.select("#scene-subtitle").style("width", wrapWidth + "px");
 }
 
 // Keeps the header buttons/slider in sync with state
@@ -55,7 +42,7 @@ function drawScatter() {
   console.log("Drawing scatter for year", state.year);
 
   d3.select("#scene-title").text("Scene 1 — The Whole Picture: COVID-19 Deaths vs. Cases by Country 2020 - 2023");
-  d3.select("#scene-subtitle").text("Each dot is a country. Color = median-age group. Both axes are log scale. This visualization shows the global trend of fatality rate by median age group. As you can see, dots representing higher median age groups gravitate towards the higher fatality rate area (upper right corner) while low median age groups gravitate towards the lower fatality rate are (lower left corner).");
+  d3.select("#scene-subtitle").text("This visualization shows the global trend of fatality rate by median age group. As you can see, dots representing higher median age groups gravitate towards the higher fatality rate area (upper right corner) while low median age groups gravitate towards the lower fatality rate are (lower left corner).  Each dot is a country. Color = median-age group. Both axes are log scale. ");
 
   const svg = d3.select("#viz");
   const width = +svg.attr("width");
@@ -126,7 +113,7 @@ function drawScatter() {
   legend.append("text")
     .attr("x", 0)
     .attr("y", 0)
-    .style("font-size", "12px")
+    .style("font-size", "11pt")
     .style("font-weight", "bold")
     .text("Country median age");
 
