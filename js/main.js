@@ -198,7 +198,7 @@ async function init() {
       annotations.push({
         note: {
           title: "Bulgaria — median age 45",
-          label: "Oldest countries cluster at the top: 336 deaths per 100k in 2021.",
+          label: "Oldest countries cluster at the top right: 336 deaths per 100k in 2021.",
           wrap: 220
         },
         x: x(bulgariaDot["Cases per 100k"]),
@@ -213,7 +213,7 @@ async function init() {
       annotations.push({
         note: {
           title: "Niger — median age 16",
-          label: "Youngest countries sit near the bottom: under 1 death per 100k.",
+          label: "Youngest countries sit near the bottom left: under 1 death per 100k.",
           wrap: 220
         },
         x: x(nigerDot["Cases per 100k"]),
