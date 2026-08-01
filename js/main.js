@@ -29,6 +29,19 @@ function render() {
   if (state.scene === 2) drawBars();
   if (state.scene === 3) drawMap();
   updateControls();
+
+  // Wrap the subtitle to the same width as the title text.
+  const titleNode = document.getElementById("scene-title");
+  const titleStyle = getComputedStyle(titleNode);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx.font = titleStyle.fontWeight + " " + titleStyle.fontSize + " " + titleStyle.fontFamily;
+  const titleTextWidth = ctx.measureText(titleNode.textContent).width;
+
+  // Don't let the subtitle stretch past the header's own available width
+  const containerWidth = document.getElementById("header").clientWidth;
+  const wrapWidth = Math.min(titleTextWidth, containerWidth);
+  d3.select("#scene-subtitle").style("width", wrapWidth + "px");
 }
 
 // Keeps the header buttons/slider in sync with state
@@ -47,7 +60,7 @@ function drawScatter() {
   const svg = d3.select("#viz");
   const width = +svg.attr("width");
   const height = +svg.attr("height");
-  const margin = { top: 30, right: 160, bottom: 55, left: 70 };
+  const margin = { top: 30, right: 175, bottom: 55, left: 70 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -108,17 +121,18 @@ function drawScatter() {
 
   // Legend
   const legend = g.append("g")
-    .attr("transform", "translate(" + (innerWidth + 30) + ", 0)");
+    .attr("transform", "translate(" + (innerWidth + 20) + ", 0)");
 
   legend.append("text")
     .attr("x", 0)
     .attr("y", 0)
+    .style("font-size", "12px")
     .style("font-weight", "bold")
     .text("Country median age");
 
   ageGroups.forEach(function(group, i) {
     const row = legend.append("g")
-      .attr("transform", "translate(0, " + (20 + i * 22) + ")");
+      .attr("transform", "translate(0, " + (22 + i * 22) + ")");
 
     row.append("rect")
       .attr("width", 14)
@@ -128,6 +142,7 @@ function drawScatter() {
     row.append("text")
       .attr("x", 20)
       .attr("y", 12)
+      .style("font-size", "12px")
       .text(group);
   });
 }
