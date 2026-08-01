@@ -39,10 +39,10 @@ function updateControls() {
 }
 
 function drawScatter() {
-  console.log("Drawing scatter for year", state.year);
+  console.log("Drawing scatter for all years");
 
   d3.select("#scene-title").text("Scene 1 — The Whole Picture: COVID-19 Deaths vs. Cases by Country 2020 - 2023");
-  d3.select("#scene-subtitle").text("This visualization shows the global trend of fatality rate by median age group. As you can see, dots representing higher median age groups gravitate towards the higher fatality rate area (upper right corner) while low median age groups gravitate towards the lower fatality rate are (lower left corner).  Each dot is a country. Color = median-age group. Both axes are log scale. ");
+  d3.select("#scene-subtitle").text("This visualization shows the global trend of fatality rate by median age group per country. As you can see, dots representing countries withhigher median age groups gravitate towards the higher fatality rate area (upper right corner) while low median age groups gravitate towards the lower fatality rate are (lower left corner).  Each dot is a country. Color = median-age group. Both axes are log scale. ");
 
   const svg = d3.select("#viz");
   const width = +svg.attr("width");
@@ -54,8 +54,34 @@ function drawScatter() {
   const g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  const filtered = data.filter(function(d) {
-    return d.Year === state.year && d["Cases per 100k"] > 0 && d["Deaths per 100k"] > 0;
+  const validRows = data.filter(function(d) {
+    return d["Cases per 100k"] > 0 && d["Deaths per 100k"] > 0;
+  });
+
+  // One dot per country: average each country's Cases/Deaths per 100k across 2020-2023
+  const byCountry = d3.group(validRows, d => d.Country);
+
+  const filtered = Array.from(byCountry, function([country, rows]) {
+    // use the most common age group for that country across all years
+    const groupCounts = {};
+    rows.forEach(function(d) {
+      groupCounts[d["Age Group"]] = (groupCounts[d["Age Group"]] || 0) + 1;
+    });
+    let ageGroup = rows[rows.length - 1]["Age Group"];
+    let bestCount = 0;
+    for (const g in groupCounts) {
+      if (groupCounts[g] > bestCount) {
+        bestCount = groupCounts[g];
+        ageGroup = g;
+      }
+    }
+
+    return {
+      Country: country,
+      "Cases per 100k": d3.mean(rows, d => d["Cases per 100k"]),
+      "Deaths per 100k": d3.mean(rows, d => d["Deaths per 100k"]),
+      "Age Group": ageGroup
+    };
   });
 
   const x = d3.scaleLog()
@@ -94,7 +120,10 @@ function drawScatter() {
     .attr("text-anchor", "middle")
     .text("Deaths per 100,000 (log)");
 
-  // Dots
+  // Dots — reveal one age group at a time, youngest to oldest
+  const groupDelayStep = 1000;
+  const groupFadeDuration = 1000;
+
   g.selectAll("circle")
     .data(filtered)
     .enter()
@@ -103,8 +132,12 @@ function drawScatter() {
     .attr("cy", d => y(d["Deaths per 100k"]))
     .attr("r", 5)
     .attr("fill", d => color(d["Age Group"]))
-    .attr("opacity", 0.75)
-    .attr("stroke", "white");
+    .attr("stroke", "white")
+    .style("opacity", 0)
+    .transition()
+    .delay(d => ageGroups.indexOf(d["Age Group"]) * groupDelayStep)
+    .duration(groupFadeDuration)
+    .style("opacity", 0.75);
 
   // Legend
   const legend = g.append("g")
@@ -132,4 +165,52 @@ function drawScatter() {
       .style("font-size", "12px")
       .text(group);
   });
+
+  // Annotations — give more details on 2 extremes after all dots have appeared
+  const annotations = [];
+
+  const bulgariaDot = filtered.find(d => d.Country === "Bulgaria");
+  if (bulgariaDot) {
+    annotations.push({
+      note: {
+        title: "Bulgaria — median age 45",
+        label: "Oldest countries cluster at the top: 336 deaths per 100k in 2021.",
+        wrap: 220
+      },
+      x: x(bulgariaDot["Cases per 100k"]),
+      y: y(bulgariaDot["Deaths per 100k"]),
+      dx: -60,
+      dy: -10
+    });
+  }
+
+  const nigerDot = filtered.find(d => d.Country === "Niger");
+  if (nigerDot) {
+    annotations.push({
+      note: {
+        title: "Niger — median age 16",
+        label: "Youngest countries sit near the bottom: under 1 death per 100k.",
+        wrap: 220
+      },
+      x: x(nigerDot["Cases per 100k"]),
+      y: y(nigerDot["Deaths per 100k"]),
+      dx: 20,
+      dy: -160
+    });
+  }
+
+  const makeAnnotations = d3.annotation()
+    .type(d3.annotationCalloutElbow)
+    .annotations(annotations);
+
+  const dotsFinishTime = (ageGroups.length - 1) * groupDelayStep + groupFadeDuration;
+
+  g.append("g")
+    .attr("class", "annotation-group")
+    .style("opacity", 0)
+    .call(makeAnnotations)
+    .transition()
+    .delay(dotsFinishTime)
+    .duration(500)
+    .style("opacity", 1);
 }
