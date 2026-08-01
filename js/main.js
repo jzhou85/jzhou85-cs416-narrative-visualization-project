@@ -97,7 +97,7 @@ function drawScatter() {
   const ageGroups = ["Under 25", "25-34", "35-44", "45+"];
   const color = d3.scaleOrdinal()
     .domain(ageGroups)
-    .range(["#fee08b", "#fdae61", "#f46d43", "#9e0142"]);
+    .range(["#fee08b", "#ffa500", "#f46d43", "#b22222"]);
 
   // Axes
   g.append("g")
@@ -232,7 +232,7 @@ function drawBars() {
   const ageGroups = ["Under 25", "25-34", "35-44", "45+"];
   const color = d3.scaleOrdinal()
     .domain(ageGroups)
-    .range(["#fee08b", "#fdae61", "#f46d43", "#9e0142"]);
+    .range(["#fee08b", "#ffa500", "#f46d43", "#b22222"]);
 
   // Average death rate per age group, pooling every country and every year
   const meansByGroup = d3.rollup(
