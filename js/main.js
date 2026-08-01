@@ -73,8 +73,8 @@ async function init() {
   function drawScatter() {
     console.log("Drawing  scene 1 scatterplot for all years"); // Debug log
 
-    d3.select("#scene-title").text("Scene 1 — Global Fatality Trend: Deaths vs. Cases by Country Median Age Group 2020 - 2023");
-    d3.select("#scene-subtitle").text("This visualization shows the global trend of fatality rate by median age group per country. As you can see, dots representing countries with higher median age groups gravitate towards the higher fatality rate quadrant (upper right) while low median age groups gravitate towards the lower fatality rate quadrant (lower left).  Each dot is a country. Color = median-age group. Both axes are log scale. ");
+    d3.select("#scene-title").text("Scene 1 — Global Fatality Trend: Deaths vs. Cases by Country Median Age 2020 - 2023");
+    d3.select("#scene-subtitle").text("This visualization shows the global trend of fatality rate by median age group per country. As you can see, dots representing countries with higher median age groups gravitate towards the higher fatality rate quadrant (upper right) while low median age groups gravitate towards the lower fatality rate quadrant (lower left).  Each dot is a country. Color = Country median age. Both axes are log scale. ");
 
     const svg = d3.select("#viz");
     const width = +svg.attr("width");
@@ -135,14 +135,14 @@ async function init() {
       .attr("x", innerWidth / 2)
       .attr("y", innerHeight + 45)
       .attr("text-anchor", "middle")
-      .text("Cases per 100,000 (log)");
+      .text("Cases per 100,000 population (log)");
 
     g.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -innerHeight / 2)
       .attr("y", -50)
       .attr("text-anchor", "middle")
-      .text("Deaths per 100,000 (log)");
+      .text("Deaths per 100,000 population (log)");
 
     // Dots — reveal one age group at a time, youngest to oldest
     const groupDelayStep = 1000;
@@ -293,14 +293,14 @@ async function init() {
       .attr("x", innerWidth / 2)
       .attr("y", innerHeight + 45)
       .attr("text-anchor", "middle")
-      .text("Country median age group");
+      .text("Country median age");
 
     g.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -innerHeight / 2)
       .attr("y", -50)
       .attr("text-anchor", "middle")
-      .text("Avg deaths per 100,000 (2020–2023)");
+      .text("Avg deaths per 100,000 population (2020–2023)");
 
     // Bars — grow from the x-axis upward, one at a time, youngest to oldest
     const groupDelayStep = 1000;
@@ -374,7 +374,7 @@ async function init() {
     console.log("Drawing map for", state.yearStart, "-", state.yearEnd); // Debugging
 
     d3.select("#scene-title").text("Scene 3 — Explore the World: COVID-19 by Country and Year");
-    d3.select("#scene-subtitle").text("Now explore for yourself. Countries are colored by median-age group. Drag the year sliders to change the year range, then click a country on the map or pick one from the dropdown to view/pin its details.");
+    d3.select("#scene-subtitle").text("Now explore for yourself. Countries are colored by median-age. Drag the year sliders to change the year range, then click a country on the map or pick one from the dropdown to view/pin its details.");
 
     const svg = d3.select("#viz");
     const width = +svg.attr("width");
