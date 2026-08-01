@@ -1,5 +1,6 @@
 #site-title {
   text-align: center;
+  font-size: 28pt;
 }
 
 #scene-title {
@@ -22,6 +23,14 @@
   flex-direction: column;
   align-items: center;
   max-width: 320px;
+  margin-top: 14px;
+}
+
+#scene-switcher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 #controls {
@@ -35,4 +44,10 @@
 #prevBtn,
 #nextBtn {
   width: 90px;
+}
+
+#yearStartSlider,
+#yearEndSlider {
+  width: 140px;
+  vertical-align: middle;
 }

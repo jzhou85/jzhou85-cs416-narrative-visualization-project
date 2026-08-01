@@ -6,21 +6,25 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1 id="site-title">COVID-19 Fatality Rate and Population Age</h1>
+  <h1 id="site-title">COVID-19 Fatality Rate and Country Population Age</h1>
   <div id="header">
     <h2 id="scene-title"></h2>
   </div>
   <div id="content">
     <svg id="viz" width="960" height="560"></svg>
     <div id="side">
-      <p id="scene-subtitle"></p>
-      <div id="controls">
+      <div id="scene-switcher">
         <button id="prevBtn">◀ Back</button>
         <span id="scene-indicator"></span>
         <button id="nextBtn">Next ▶</button>
+      </div>
+      <p id="scene-subtitle"></p>
+      <div id="controls">
         <span id="year-control" style="display:none">
-          Year: <input type="range" id="yearSlider" min="2020" max="2023" step="1" value="2021">
-          <span id="yearLabel">2021</span>
+          Start year: <input type="range" id="yearStartSlider" min="2020" max="2023" step="1" value="2020">
+          <span id="yearStartLabel">2020</span><br>
+          End year: <input type="range" id="yearEndSlider" min="2020" max="2023" step="1" value="2023">
+          <span id="yearEndLabel">2023</span>
         </span>
         <span id="country-control" style="display:none">
           Country: <select id="countrySelect"></select>
@@ -28,7 +32,6 @@
       </div>
     </div>
   </div>
-  <div id="tooltip" class="hidden"></div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-svg-annotation@2/d3-annotation.min.js"></script>
